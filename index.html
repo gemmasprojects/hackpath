@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HackPath — Learn Cybersecurity Free</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e0f;
+    --surface: #111617;
+    --surface2: #161d1e;
+    --border: #1e2a2b;
+    --accent: #00ff88;
+    --accent2: #00ccff;
+    --accent3: #ff6b35;
+    --text: #e8f0f0;
+    --muted: #5a7070;
+    --danger: #ff4757;
+    --gold: #ffd700;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Syne', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Scanline overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,136,0.015) 2px, rgba(0,255,136,0.015) 4px);
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  /* NAV */
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.2rem 2rem;
+    border-bottom: 1px solid var(--border);
+    background: rgba(10,14,15,0.95);
+    backdrop-filter: blur(10px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    font-family: 'Space Mono', monospace;
+    font-size: 1.2rem;
+    color: var(--accent);
+    text-decoration: none;
+    letter-spacing: -0.02em;
+  }
+
+  .logo span { color: var(--text); }
+
+  .nav-stats {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+  }
+
+  .stat-pill {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 0.35rem 0.75rem;
+    border-radius: 100px;
+  }
+
+  .stat-pill .val {
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .streak { color: var(--accent3) !important; }
+
+  /* HERO */
+  .hero {
+    padding: 5rem 2rem 3rem;
+    text-align: center;
+    position: relative;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 300px;
+    background: radial-gradient(ellipse, rgba(0,255,136,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-tag {
+    display: inline-block;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 0.3rem 0.8rem;
+    border-radius: 100px;
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    animation: fadeInDown 0.6s ease both;
+  }
+
+  .hero h1 {
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 800;
+    line-height: 1.05;
+    margin-bottom: 1.2rem;
+    animation: fadeInUp 0.7s ease 0.1s both;
+  }
+
+  .hero h1 .hl { color: var(--accent); }
+  .hero h1 .hl2 { color: var(--accent2); }
+
+  .hero p {
+    font-size: 1.1rem;
+    color: var(--muted);
+    max-width: 520px;
+    margin: 0 auto 2.5rem;
+    line-height: 1.7;
+    animation: fadeInUp 0.7s ease 0.2s both;
+  }
+
+  .hero-cta {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    animation: fadeInUp 0.7s ease 0.3s both;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #0a0e0f;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 0.85rem 2rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+    letter-spacing: 0.05em;
+  }
+
+  .btn-primary:hover {
+    background: #00ffaa;
+    transform: translateY(-2px);
+    box-shadow: 0 0 30px rgba(0,255,136,0.3);
+  }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.85rem;
+    padding: 0.85rem 2rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .btn-ghost:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* XP BAR */
+  .xp-section {
+    max-width: 600px;
+    margin: 0 auto 4rem;
+    padding: 0 2rem;
+    animation: fadeInUp 0.7s ease 0.4s both;
+  }
+
+  .xp-label {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+
+  .xp-label span:last-child { color: var(--accent); }
+
+  .xp-track {
+    height: 6px;
+    background: var(--surface2);
+    border-radius: 100px;
+    overflow: hidden;
+  }
+
+  .xp-fill {
+    height: 100%;
+    width: 35%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 100px;
+    animation: xpGrow 1.5s ease 0.8s both;
+    position: relative;
+  }
+
+  .xp-fill::after {
+    content: '';
+    position: absolute;
+    right: 0; top: 0; bottom: 0;
+    width: 20px;
+    background: rgba(255,255,255,0.4);
+    border-radius: 100px;
+    filter: blur(4px);
+  }
+
+  /* SKILL TREE */
+  .section {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 2rem 5rem;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .section-header h2 {
+    font-size: 1.5rem;
+    font-weight: 800;
+  }
+
+  .section-header .sub {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+  }
+
+  .skill-tree {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  /* SKILL ROW */
+  .skill-row {
+    display: grid;
+    grid-template-columns: 48px 1fr auto;
+    align-items: center;
+    gap: 1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .skill-row::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--accent);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .skill-row:hover {
+    border-color: var(--accent);
+    transform: translateX(4px);
+    background: var(--surface2);
+  }
+
+  .skill-row:hover::before { opacity: 1; }
+
+  .skill-row.locked {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  .skill-row.locked::before { display: none; }
+
+  .skill-row.completed {
+    border-color: rgba(0,255,136,0.2);
+  }
+
+  .skill-row.completed::before { opacity: 1; }
+
+  .skill-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+  }
+
+  .skill-icon.green { background: rgba(0,255,136,0.1); }
+  .skill-icon.blue { background: rgba(0,204,255,0.1); }
+  .skill-icon.orange { background: rgba(255,107,53,0.1); }
+  .skill-icon.purple { background: rgba(167,100,255,0.1); }
+  .skill-icon.gold { background: rgba(255,215,0,0.1); }
+
+  .skill-info h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 0.2rem;
+  }
+
+  .skill-info p {
+    font-size: 0.78rem;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  .skill-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.4rem;
+    flex-shrink: 0;
+  }
+
+  .badge {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 100px;
+    white-space: nowrap;
+  }
+
+  .badge.done { background: rgba(0,255,136,0.15); color: var(--accent); }
+  .badge.inprogress { background: rgba(0,204,255,0.15); color: var(--accent2); }
+  .badge.new { background: rgba(255,107,53,0.15); color: var(--accent3); }
+  .badge.locked-badge { background: rgba(90,112,112,0.15); color: var(--muted); }
+
+  .xp-reward {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--gold);
+  }
+
+  /* CONNECTOR LINE */
+  .connector {
+    display: flex;
+    justify-content: center;
+    height: 20px;
+    position: relative;
+  }
+
+  .connector::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0; bottom: 0;
+    width: 1px;
+    background: var(--border);
+  }
+
+  /* CHALLENGE MODAL */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.8);
+    backdrop-filter: blur(8px);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s;
+  }
+
+  .modal-overlay.open {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    width: 100%;
+    max-width: 580px;
+    padding: 2rem;
+    transform: translateY(20px);
+    transition: transform 0.25s;
+  }
+
+  .modal-overlay.open .modal {
+    transform: translateY(0);
+  }
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+  }
+
+  .modal-header h2 {
+    font-size: 1.3rem;
+    font-weight: 800;
+  }
+
+  .modal-header p {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-top: 0.3rem;
+  }
+
+  .close-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+
+  .close-btn:hover { color: var(--text); border-color: var(--text); }
+
+  .challenge-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.82rem;
+    line-height: 1.7;
+    color: var(--text);
+  }
+
+  .challenge-box .prompt-label {
+    font-size: 0.65rem;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  .hint-btn {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+    background: none;
+    border: 1px dashed var(--border);
+    padding: 0.4rem 0.9rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 1.25rem;
+  }
+
+  .hint-btn:hover { color: var(--accent2); border-color: var(--accent2); }
+
+  .hint-text {
+    background: rgba(0,204,255,0.05);
+    border: 1px solid rgba(0,204,255,0.2);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-size: 0.8rem;
+    color: var(--accent2);
+    margin-bottom: 1.25rem;
+    display: none;
+    line-height: 1.6;
+  }
+
+  .hint-text.visible { display: block; }
+
+  .answer-row {
+    display: flex;
+    gap: 0.75rem;
+  }
+
+  .answer-input {
+    flex: 1;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.85rem;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .answer-input:focus { border-color: var(--accent); }
+  .answer-input.correct { border-color: var(--accent); background: rgba(0,255,136,0.05); }
+  .answer-input.wrong { border-color: var(--danger); background: rgba(255,71,87,0.05); }
+
+  .submit-btn {
+    background: var(--accent);
+    color: #0a0e0f;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.82rem;
+    font-weight: 700;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .submit-btn:hover { background: #00ffaa; }
+
+  .feedback {
+    margin-top: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    font-family: 'Space Mono', monospace;
+    display: none;
+  }
+
+  .feedback.correct-fb {
+    background: rgba(0,255,136,0.1);
+    border: 1px solid rgba(0,255,136,0.3);
+    color: var(--accent);
+    display: block;
+  }
+
+  .feedback.wrong-fb {
+    background: rgba(255,71,87,0.1);
+    border: 1px solid rgba(255,71,87,0.3);
+    color: var(--danger);
+    display: block;
+  }
+
+  /* STATS SECTION */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 4rem;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem;
+    text-align: center;
+  }
+
+  .stat-card .big {
+    font-family: 'Space Mono', monospace;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 0.4rem;
+  }
+
+  .stat-card .big.blue { color: var(--accent2); }
+  .stat-card .big.orange { color: var(--accent3); }
+
+  .stat-card .label {
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem;
+    text-align: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+  }
+
+  footer a { color: var(--accent); text-decoration: none; }
+
+  /* ANIMATIONS */
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes xpGrow {
+    from { width: 0; }
+    to { width: 35%; }
+  }
+
+  @keyframes popIn {
+    0% { transform: scale(0.8); opacity: 0; }
+    70% { transform: scale(1.05); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .pop { animation: popIn 0.4s ease both; }
+
+  /* XP TOAST */
+  .xp-toast {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: var(--surface);
+    border: 1px solid var(--accent);
+    border-radius: 10px;
+    padding: 0.75rem 1.25rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.82rem;
+    color: var(--accent);
+    box-shadow: 0 0 30px rgba(0,255,136,0.2);
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 300;
+  }
+
+  .xp-toast.show {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  /* MOBILE */
+  @media (max-width: 600px) {
+    .stats-row { grid-template-columns: 1fr; }
+    .nav-stats { display: none; }
+    .hero { padding: 3rem 1.5rem 2rem; }
+    .section { padding: 0 1.5rem 3rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="logo">hack<span>path</span></a>
+  <div class="nav-stats">
+    <div class="stat-pill">🔥 <span class="val streak" id="nav-streak">3</span> day streak</div>
+    <div class="stat-pill">⚡ <span class="val" id="nav-xp">350</span> XP</div>
+    <div class="stat-pill">🏆 <span class="val">Lv.2</span></div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">// free forever — no paywall</div>
+  <h1>Learn hacking<br><span class="hl">the fun way.</span><br><span class="hl2">No BS.</span></h1>
+  <p>Step-by-step cybersecurity training that actually makes sense. Like Duolingo, but you learn to break things.</p>
+  <div class="hero-cta">
+    <a href="#learn" class="btn-primary">Start Learning →</a>
+    <a href="#" class="btn-ghost">View Roadmap</a>
+  </div>
+</div>
+
+<!-- XP BAR -->
+<div class="xp-section">
+  <div class="xp-label">
+    <span>Level 2 — Script Kiddie</span>
+    <span id="xp-text">350 / 1000 XP</span>
+  </div>
+  <div class="xp-track">
+    <div class="xp-fill" id="xp-fill"></div>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="section">
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="big" id="stat-challenges">4</div>
+      <div class="label">Challenges Completed</div>
+    </div>
+    <div class="stat-card">
+      <div class="big blue" id="stat-streak">3</div>
+      <div class="label">Day Streak 🔥</div>
+    </div>
+    <div class="stat-card">
+      <div class="big orange">∞</div>
+      <div class="label">Always Free</div>
+    </div>
+  </div>
+
+  <!-- SKILL TREE -->
+  <div id="learn" class="section-header">
+    <h2>Your Learning Path</h2>
+    <span class="sub">// click a lesson to begin</span>
+  </div>
+
+  <div class="skill-tree">
+
+    <!-- Lesson 1 - completed -->
+    <div class="skill-row completed" onclick="openModal('linux1')">
+      <div class="skill-icon green">🐧</div>
+      <div class="skill-info">
+        <h3>Linux Basics — The Terminal</h3>
+        <p>Navigate the filesystem, read files, and run your first commands.</p>
+      </div>
+      <div class="skill-meta">
+        <span class="badge done">✓ Done</span>
+        <span class="xp-reward">+100 XP</span>
+      </div>
+    </div>
+
+    <div class="connector"></div>
+
+    <!-- Lesson 2 - completed -->
+    <div class="skill-row completed" onclick="openModal('linux2')">
+      <div class="skill-icon green">📁</div>
+      <div class="skill-info">
+        <h3>Linux Basics — Files & Permissions</h3>
+        <p>Understand who can read, write, and execute files on a Linux system.</p>
+      </div>
+      <div class="skill-meta">
+        <span class="badge done">✓ Done</span>
+        <span class="xp-reward">+100 XP</span>
+      </div>
+    </div>
+
+    <div class="connector"></div>
+
+    <!-- Lesson 3 - in progress -->
+    <div class="skill-row" onclick="openModal('networking1')">
+      <div class="skill-icon blue">🌐</div>
+      <div class="skill-info">
+        <h3>Networking 101 — IP & Ports</h3>
+        <p>What is an IP address? What are ports? Why do hackers care about them?</p>
+      </div>
+      <div class="skill-meta">
+        <span class="badge inprogress">In Progress</span>
+        <span class="xp-reward">+150 XP</span>
+      </div>
+    </div>
+
+    <div class="connector"></div>
+
+    <!-- Lesson 4 - new -->
+    <div class="skill-row" onclick="openModal('crypto1')">
+      <div class="skill-icon orange">🔐</div>
+      <div class="skill-info">
+        <h3>Cryptography — Caesar Cipher</h3>
+        <p>Decode your first secret message. Learn how simple ciphers work.</p>
+      </div>
+      <div class="skill-meta">
+        <span class="badge new">New</span>
+        <span class="xp-reward">+100 XP</span>
+      </div>
+    </div>
+
+    <div class="connector"></div>
+
+    <!-- Lesson 5 - locked -->
+    <div class="skill-row locked">
+      <div class="skill-icon purple">🕵️</div>
+      <div class="skill-info">
+        <h3>Web Hacking — Inspect & Discover</h3>
+        <p>Use browser dev tools to find hidden data on websites.</p>
+      </div>
+      <div class="skill-meta">
+        <span class="badge locked-badge">🔒 Locked</span>
+        <span class="xp-reward">+200 XP</span>
+      </div>
+    </div>
+
+    <div class="connector"></div>
+
+    <!-- Lesson 6 - locked -->
+    <div class="skill-row locked">
+      <div class="skill-icon gold">⚡</div>
+      <div class="skill-info">
+        <h3>Your First CTF Challenge</h3>
+        <p>Apply everything you've learned in a real Capture The Flag challenge.</p>
+      </div>
+      <div class="skill-meta">
+        <span class="badge locked-badge">🔒 Locked</span>
+        <span class="xp-reward">+500 XP</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <p>hackpath — always free, always open &nbsp;·&nbsp; <a href="#">GitHub</a> &nbsp;·&nbsp; <a href="#">Discord</a> &nbsp;·&nbsp; <a href="#">Roadmap</a></p>
+  <p style="margin-top:0.5rem; font-size:0.6rem;">built by learners, for learners 🛡️</p>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal" onclick="closeModalOutside(event)">
+  <div class="modal" id="modal-content">
+    <div class="modal-header">
+      <div>
+        <h2 id="modal-title">Challenge</h2>
+        <p id="modal-subtitle">Complete the challenge to earn XP</p>
+      </div>
+      <button class="close-btn" onclick="closeModal()">✕</button>
+    </div>
+    <div class="challenge-box">
+      <div class="prompt-label">// challenge</div>
+      <div id="modal-challenge">Loading...</div>
+    </div>
+    <button class="hint-btn" onclick="toggleHint()">💡 Show Hint (-10 XP)</button>
+    <div class="hint-text" id="hint-text">Hint goes here.</div>
+    <div class="answer-row">
+      <input class="answer-input" id="answer-input" type="text" placeholder="Your answer..." onkeydown="if(event.key==='Enter')checkAnswer()"/>
+      <button class="submit-btn" onclick="checkAnswer()">Submit</button>
+    </div>
+    <div class="feedback" id="feedback"></div>
+  </div>
+</div>
+
+<!-- XP TOAST -->
+<div class="xp-toast" id="xp-toast">⚡ +100 XP earned!</div>
+
+<script>
+  const challenges = {
+    linux1: {
+      title: '🐧 Linux Basics — The Terminal',
+      subtitle: 'Lesson 1 of 6 · 100 XP',
+      challenge: 'You open a Linux terminal. Which command do you type to see a list of files and folders in the current directory?',
+      hint: 'It\'s short — just two letters. Think "list".',
+      answer: 'ls',
+      xp: 100,
+      completed: true
+    },
+    linux2: {
+      title: '📁 Files & Permissions',
+      subtitle: 'Lesson 2 of 6 · 100 XP',
+      challenge: 'You run "ls -la" and see this at the start of a line:\n\n-rwxr-xr--\n\nWhat does the very first "-" tell you about this file?',
+      hint: 'Compare it to what a "d" would mean in that position. What\'s the opposite of a directory?',
+      answer: 'it is a file',
+      altAnswers: ['file', 'regular file', "it's a file"],
+      xp: 100,
+      completed: true
+    },
+    networking1: {
+      title: '🌐 Networking 101 — IP & Ports',
+      subtitle: 'Lesson 3 of 6 · 150 XP',
+      challenge: 'A web server is listening for secure HTTPS traffic. What port number does HTTPS use by default?\n\n(Hint: HTTP uses port 80 — HTTPS adds security and uses a different one.)',
+      hint: 'Think of a combination lock. HTTPS default port is 443.',
+      answer: '443',
+      xp: 150,
+      completed: false
+    },
+    crypto1: {
+      title: '🔐 Caesar Cipher',
+      subtitle: 'Lesson 4 of 6 · 100 XP',
+      challenge: 'You intercept an encoded message:\n\n"KHOOR"\n\nThis is a Caesar cipher shifted by 3. Each letter has been moved 3 places forward in the alphabet.\n\nK→H, H→E, O→L, O→L, R→O\n\nWhat does "KHOOR" decode to?',
+      hint: 'Shift each letter back 3 positions: K=11, 11-3=8, 8th letter = H...',
+      answer: 'hello',
+      xp: 100,
+      completed: false
+    }
+  };
+
+  let xp = 350;
+  let challengesCompleted = 4;
+  let hintShown = false;
+  let currentChallenge = null;
+
+  function openModal(id) {
+    const c = challenges[id];
+    if (!c) return;
+    currentChallenge = c;
+    hintShown = false;
+
+    document.getElementById('modal-title').textContent = c.title;
+    document.getElementById('modal-subtitle').textContent = c.subtitle;
+    document.getElementById('modal-challenge').textContent = c.challenge;
+    document.getElementById('hint-text').textContent = c.hint;
+    document.getElementById('hint-text').classList.remove('visible');
+    document.getElementById('answer-input').value = '';
+    document.getElementById('answer-input').className = 'answer-input';
+    document.getElementById('feedback').className = 'feedback';
+    document.getElementById('feedback').textContent = '';
+
+    if (c.completed) {
+      document.getElementById('answer-input').placeholder = 'Already completed — try again for fun!';
+    } else {
+      document.getElementById('answer-input').placeholder = 'Your answer...';
+    }
+
+    document.getElementById('modal').classList.add('open');
+  }
+
+  function closeModal() {
+    document.getElementById('modal').classList.remove('open');
+  }
+
+  function closeModalOutside(e) {
+    if (e.target === document.getElementById('modal')) closeModal();
+  }
+
+  function toggleHint() {
+    const hint = document.getElementById('hint-text');
+    hint.classList.toggle('visible');
+    if (!hintShown) {
+      hintShown = true;
+    }
+  }
+
+  function checkAnswer() {
+    const input = document.getElementById('answer-input');
+    const feedback = document.getElementById('feedback');
+    const userAnswer = input.value.trim().toLowerCase();
+    const c = currentChallenge;
+
+    if (!userAnswer) return;
+
+    const correctAnswers = [c.answer.toLowerCase(), ...(c.altAnswers || []).map(a => a.toLowerCase())];
+    const isCorrect = correctAnswers.some(a => userAnswer.includes(a) || a.includes(userAnswer));
+
+    if (isCorrect) {
+      input.classList.add('correct');
+      const earnedXp = hintShown ? c.xp - 10 : c.xp;
+      feedback.className = 'feedback correct-fb';
+      feedback.textContent = `✓ Correct! You earned +${earnedXp} XP. ${hintShown ? '(Hint used: -10 XP)' : '🔥 No hints needed!'}`;
+
+      if (!c.completed) {
+        c.completed = true;
+        xp += earnedXp;
+        challengesCompleted++;
+        updateStats();
+        showXpToast(earnedXp);
+      }
+    } else {
+      input.classList.add('wrong');
+      feedback.className = 'feedback wrong-fb';
+      feedback.textContent = '✗ Not quite — check your answer and try again.';
+      setTimeout(() => {
+        input.classList.remove('wrong');
+      }, 1500);
+    }
+  }
+
+  function updateStats() {
+    document.getElementById('nav-xp').textContent = xp;
+    document.getElementById('xp-text').textContent = `${xp} / 1000 XP`;
+    document.getElementById('xp-fill').style.width = Math.min((xp / 1000) * 100, 100) + '%';
+    document.getElementById('stat-challenges').textContent = challengesCompleted;
+  }
+
+  function showXpToast(amount) {
+    const toast = document.getElementById('xp-toast');
+    toast.textContent = `⚡ +${amount} XP earned!`;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3000);
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeModal();
+  });
+</script>
+</body>
+</html>
